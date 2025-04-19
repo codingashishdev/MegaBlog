@@ -72,9 +72,7 @@ const router = createBrowserRouter([
             },
         ],
     },
-], {
-    basename: "/megablog"
-});
+]);
 
 createRoot(document.getElementById('root')).render(
     <Provider store={store}>
