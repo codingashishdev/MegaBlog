@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'InterDisplay';
+  /* Path is now absolute from the public root */
+  src: url('/fonts/inter-display/ttf/InterDisplay-Regular.ttf') format('truetype');
+  /* ... other font properties */
+}
