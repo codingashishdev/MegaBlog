@@ -28,4 +28,4 @@ npm run dev
 
 # Deployment
 
-you can preview our application deployed on the vercel - https://megablog-0-version.vercel.app/
+you can preview our application deployed on the vercel - https://megablog-0-versione.vercel.app/
