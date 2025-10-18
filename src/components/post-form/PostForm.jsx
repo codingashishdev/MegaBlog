@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
@@ -20,42 +20,49 @@ export default function PostForm({ post }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch()
 	const userData = useSelector((state) => state.auth.userData);
+	const [error, setError] = useState("");
 
 	const submit = async (data) => {
-		if (post) {
-			const file = data.image[0]
-				? await appwriteService.uploadFile(data.image[0])
-				: null;
-
-			if (file) {
-				appwriteService.deleteFile(post.featuredImage);
-			}
-
-			const dbPost = await appwriteService.updatePost(post.$id, {
-				...data,
-				featuredImage: file ? file.$id : undefined,
-			});
-
-			if (dbPost) {
-				dispatch(updatePost(dbPost))
+		try {
+			if (post) {
+				// Handle update
+				const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+				if (file && !file.$id) {
+					throw new Error("File upload failed: Invalid response from Appwrite.");
+				}
+				if (file) {
+					await appwriteService.deleteFile(post.featuredImage);
+				}
+				const dbPost = await appwriteService.updatePost(post.$id, {
+					...data,
+					featuredImage: file ? file.$id : undefined,
+				});
+				if (!dbPost || !dbPost.$id) {
+					throw new Error("Post update failed: Invalid response from Appwrite.");
+				}
+				dispatch(updatePost(dbPost));
 				navigate(`/post/${dbPost.$id}`);
-			}
-		} else {
-			const file = await appwriteService.uploadFile(data.image[0]);
-
-			if (file && file.$id) {
+			} else {
+				// Handle create
+				const file = await appwriteService.uploadFile(data.image[0]);
+				if (!file || !file.$id) {
+					throw new Error("File upload failed: Invalid response from Appwrite.");
+				}
 				const fileId = file.$id;
 				data.featuredImage = fileId;
 				const dbPost = await appwriteService.createPost({
 					...data,
 					userId: userData.$id,
 				});
-
-				if (dbPost) {
-					dispatch(addPost(dbPost))
-					navigate(`/post/${dbPost.$id}`);
+				if (!dbPost || !dbPost.$id) {
+					throw new Error("Post creation failed: Invalid response from Appwrite.");
 				}
+				dispatch(addPost(dbPost));
+				navigate(`/post/${dbPost.$id}`);
 			}
+		} catch (error) {
+			console.error("Error in post submission:", error);
+			setError("Failed to save post. Please try again.");
 		}
 	};
 
@@ -84,6 +91,11 @@ export default function PostForm({ post }) {
 
 	return (
 		<div className="animate-fade-in">
+			{error && (
+				<div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+					{error}
+				</div>
+			)}
 			<form onSubmit={handleSubmit(submit)} className="max-w-7xl mx-auto">
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 					{/* Main Content Section */}
