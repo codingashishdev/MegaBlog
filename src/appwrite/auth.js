@@ -45,6 +45,33 @@ export class AuthService {
 		}
 	}
 
+	async updateName(name) {
+		try {
+			return await this.account.updateName(name);
+		} catch (error) {
+			console.error("Appwrite authentication service :: update name error", error);
+			throw error;
+		}
+	}
+
+	async updateEmail(email, password) {
+		try {
+			return await this.account.updateEmail(email, password);
+		} catch (error) {
+			console.error("Appwrite authentication service :: update email error", error);
+			throw error;
+		}
+	}
+
+	async updatePassword(newPassword, oldPassword) {
+		try {
+			return await this.account.updatePassword(newPassword, oldPassword);
+		} catch (error) {
+			console.error("Appwrite authentication service :: update password error", error);
+			throw error;
+		}
+	}
+
 	async logout() {
 		try {
 			return await this.account.deleteSessions();

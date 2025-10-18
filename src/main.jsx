@@ -12,6 +12,7 @@ import AddPost from "./pages/AddPost.jsx";
 import EditPost from "./pages/EditPost.jsx";
 import Post from "./pages/Post.jsx";
 import Home from "./pages/Home.jsx";
+import Profile from "./pages/Profile.jsx";
 
 const router = createBrowserRouter([
     {
@@ -62,6 +63,15 @@ const router = createBrowserRouter([
                     <AuthLayout authentication>
                         {" "}
                         <EditPost />
+                    </AuthLayout>
+                ),
+            },
+            {
+                path: "/profile",
+                element: (
+                    <AuthLayout authentication>
+                        {" "}
+                        <Profile />
                     </AuthLayout>
                 ),
             },

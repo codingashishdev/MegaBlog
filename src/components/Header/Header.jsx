@@ -3,11 +3,9 @@ import Logo from "../Logo.jsx";
 import LogoutBtn from "./LogoutBtn.jsx";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 function Header() {
     const authStatus = useSelector((state) => state.auth.status);
-    const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     
@@ -46,6 +44,11 @@ function Header() {
         {
             name: "All posts",
             slug: "/all-posts",
+            active: authStatus,
+        },
+        {
+            name: "Profile",
+            slug: "/profile",
             active: authStatus,
         },
         {

@@ -22,7 +22,7 @@ function App() {
             })
             .catch((e) => console.log("user not logged in", e.message))
             .finally(() => setLoading(false));
-    }, []);
+    }, [dispatch]);
 
     // return (<><Landing/></>)
     return !loading ? (

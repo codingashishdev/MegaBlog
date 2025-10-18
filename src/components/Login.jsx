@@ -23,7 +23,7 @@ function Login() {
                 if (userData) dispatch(storeLogin(userData));
                 navigate("/");
             }
-        } catch (err) {
+        } catch {
             setError("Invalid email or password. Please try again.");
         } finally {
             setIsLoading(false);
