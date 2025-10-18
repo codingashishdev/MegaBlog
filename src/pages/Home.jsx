@@ -9,13 +9,32 @@ function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setIsLoading(true);
-        appwriteService.getAllPosts([]).then((posts) => {
-            if (posts) {
-                setPosts(posts.documents);
+        let isMounted = true;
+
+        const fetchPosts = async () => {
+            setIsLoading(true);
+            try {
+                const response = await appwriteService.getAllPosts([]);
+                if (isMounted && response) {
+                    setPosts(response.documents);
+                }
+            } catch (error) {
+                console.error("Failed to load posts", error);
+                if (isMounted) {
+                    setPosts([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
-            setIsLoading(false);
-        });
+        };
+
+        fetchPosts();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     if (isLoading) {

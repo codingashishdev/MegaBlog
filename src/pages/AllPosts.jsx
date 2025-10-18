@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, PostCard, Button } from "../components";
 import appwriteService from "../appwrite/config";
-import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 
 function AllPosts() {
@@ -10,13 +9,32 @@ function AllPosts() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setIsLoading(true);
-        appwriteService.getAllPosts([]).then((posts) => {
-            if (posts) {
-                setPosts(posts.documents);
+        let isMounted = true;
+
+        const fetchPosts = async () => {
+            setIsLoading(true);
+            try {
+                const response = await appwriteService.getAllPosts([]);
+                if (isMounted && response) {
+                    setPosts(response.documents);
+                }
+            } catch (error) {
+                console.error("Failed to load all posts", error);
+                if (isMounted) {
+                    setPosts([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
-            setIsLoading(false);
-        });
+        };
+
+        fetchPosts();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     if (isLoading) {
