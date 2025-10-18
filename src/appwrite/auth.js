@@ -20,9 +20,10 @@ export class AuthService {
 				password,
 				name,
 			);
-			return userAccount ? this.login(email, password) : userAccount;
+			return userAccount ? this.login({ email, password }) : userAccount;
 		} catch (error) {
-			console.log("Appwrite authentication service :: account creation error", error);
+			console.error("Appwrite authentication service :: account creation error", error);
+			throw error;
 		}
 	}
 
@@ -30,7 +31,8 @@ export class AuthService {
 		try {
 			return await this.account.createEmailPasswordSession(email, password);
 		} catch (error) {
-			console.log("Appwrite authentication service :: user login error", error);
+			console.error("Appwrite authentication service :: user login error", error);
+			throw error;
 		}
 	}
 
@@ -38,7 +40,8 @@ export class AuthService {
 		try {
 			return await this.account.get();
 		} catch (error) {
-			console.log("Appwrite authentication service :: fetching user account error", error);
+			console.error("Appwrite authentication service :: fetching user account error", error);
+			return null;
 		}
 	}
 
@@ -46,7 +49,8 @@ export class AuthService {
 		try {
 			return await this.account.deleteSessions();
 		} catch (error) {
-			console.log("Appwrite authentication service :: user logout error", error);
+			console.error("Appwrite authentication service :: user logout error", error);
+			throw error;
 		}
 	}
 }

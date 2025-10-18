@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
 import { Container, PostCard, Button } from "../components";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,19 @@ function Home() {
         });
     }, []);
 
-    if (posts.length == 0) {
+    if (isLoading) {
+        return (
+            <div className="w-full py-8 mt-4">
+                <Container>
+                    <div className="flex justify-center items-center min-h-[60vh]">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    </div>
+                </Container>
+            </div>
+        );
+    }
+
+    if (posts.length === 0) {
         return (
             <div className="w-full py-8 mt-4">
                 <Container>

@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from 'prop-types'
 
 // Function to combine class names
 const cn = (...classes) => {
@@ -12,24 +12,26 @@ function Button({
     size = 'default',
     isLoading = false,
     className = '',
+    bgColor,
     ...props
 }) {
-    // Define variant styles
+    // Define variant styles with improved gradients and shadows
     const variants = {
-        default: "bg-blue-600 hover:bg-blue-700 text-white",
-        destructive: "bg-red-600 hover:bg-red-700 text-white",
-        outline: "border border-gray-300 bg-transparent hover:bg-gray-100 text-gray-800",
-        secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+        default: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg",
+        destructive: "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-md hover:shadow-lg",
+        outline: "border-2 border-gray-300 bg-transparent hover:bg-gray-50 text-gray-800 hover:border-gray-400",
+        secondary: "bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-800 shadow-sm hover:shadow",
         ghost: "bg-transparent hover:bg-gray-100 text-gray-800",
         link: "bg-transparent underline text-blue-600 hover:text-blue-800",
+        gradient: "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md hover:shadow-xl",
     };
 
     // Define size styles
     const sizes = {
-        default: "px-4 py-2",
-        sm: "px-2 py-1 text-sm",
-        lg: "px-6 py-3 text-lg",
-        icon: "p-2",
+        default: "px-5 py-2.5 text-sm",
+        sm: "px-3 py-1.5 text-xs",
+        lg: "px-7 py-3.5 text-base",
+        icon: "p-2.5",
     };
 
     return (
@@ -37,12 +39,13 @@ function Button({
             type={type}
             className={cn(
                 // Base styles
-                "inline-flex items-center justify-center rounded-lg font-medium transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-                "disabled:opacity-50 disabled:pointer-events-none",
-                "hover:cursor-pointer",
-                // Apply variant
-                variants[variant],
+                "inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200",
+                "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                variant === 'default' || variant === 'gradient' ? "focus:ring-blue-500" : "focus:ring-gray-400",
+                "disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed",
+                "hover:cursor-pointer active:scale-95",
+                // Apply variant or custom bgColor
+                bgColor || variants[variant],
                 // Apply size
                 sizes[size],
                 // Additional classes
@@ -53,7 +56,7 @@ function Button({
         >
             {isLoading && (
                 <svg 
-                    className="animate-spin -ml-1 mr-2 h-4 w-4" 
+                    className="animate-spin -ml-1 mr-2.5 h-4 w-4" 
                     xmlns="http://www.w3.org/2000/svg" 
                     fill="none" 
                     viewBox="0 0 24 24"
@@ -74,6 +77,17 @@ function Button({
             {children}
         </button>
     );
+}
+
+Button.propTypes = {
+    children: PropTypes.node.isRequired,
+    type: PropTypes.oneOf(['button', 'submit', 'reset']),
+    variant: PropTypes.oneOf(['default', 'destructive', 'outline', 'secondary', 'ghost', 'link', 'gradient']),
+    size: PropTypes.oneOf(['default', 'sm', 'lg', 'icon']),
+    isLoading: PropTypes.bool,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    bgColor: PropTypes.string,
 }
 
 export default Button;
