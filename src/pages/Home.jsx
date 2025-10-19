@@ -16,19 +16,17 @@ function Home() {
             try {
                 const response = await appwriteService.getAllPosts([]);
                 if (isMounted && response) {
-                    // Fetch author information for each post
-                    const postsWithAuthors = await Promise.all(
-                        response.documents.map(async (post) => {
-                            const authorName = await appwriteService.getUserName(post.userId);
-                            return {
-                                ...post,
-                                author: {
-                                    name: authorName,
-                                    initials: appwriteService.getInitials(authorName)
-                                }
-                            };
-                        })
-                    );
+                    // Add author information to posts (from post document or default to Anonymous)
+                    const postsWithAuthors = response.documents.map((post) => {
+                        const authorName = post.author || "Anonymous";
+                        return {
+                            ...post,
+                            author: {
+                                name: authorName,
+                                initials: appwriteService.getInitials(authorName)
+                            }
+                        };
+                    });
                     setPosts(postsWithAuthors);
                 }
             } catch (error) {

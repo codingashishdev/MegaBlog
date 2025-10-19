@@ -1,12 +1,11 @@
 import conf from "../conf/conf";
-import { Client, ID, Databases, Storage, Query, Users } from "appwrite";
+import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 
 export class Service {
 	client = new Client();
 	databases;
 	storage;
-	users;
 
 	constructor() {
 		this.client
@@ -15,10 +14,9 @@ export class Service {
 
 		this.databases = new Databases(this.client);
 		this.storage = new Storage(this.client);
-		this.users = new Users(this.client);
 	}
 
-	async createPost({ title, slug, content, featuredImage, status, userId }) {
+	async createPost({ title, slug, content, featuredImage, status, userId, author }) {
 		try {
 			return await this.databases.createDocument(
 				conf.appwriteDatabaseId,
@@ -30,6 +28,7 @@ export class Service {
 					featuredImage,
 					status,
 					userId,
+					author: author || "Anonymous",
 				}
 			);
 		} catch (error) {
@@ -130,13 +129,11 @@ export class Service {
 	}
 
 	async getUserName(userId) {
-		try {
-			const user = await this.users.get(userId);
-			return user.name;
-		} catch (error) {
-			console.error("Appwrite service :: getUserName :: error", error);
-			return "Anonymous";
-		}
+		// Note: Due to Appwrite client SDK limitations, we cannot fetch user data by ID without admin access
+		// The recommended approach is to store the author name in the post document when creating it
+		// This is a helper method that returns Anonymous as a fallback
+		// Implement proper user name fetching by storing author info in posts
+		return "Anonymous";
 	}
 
 	getInitials(name) {

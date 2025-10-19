@@ -82,6 +82,21 @@ export class AuthService {
 			return true;
 		}
 	}
+
+	// Note: Users API requires admin access which is not available on client
+	// Instead, we'll store author name with posts or use a workaround
+	async getUserNameById(userId) {
+		try {
+			// This is a client-side limitation - we can't fetch other users by ID without admin access
+			// The solution is to store the author name in the post document itself
+			// For now, returning a generic message
+			console.warn("getUserNameById: Fetching user by ID requires admin access. Store author name in post document instead.");
+			return "Anonymous";
+		} catch (error) {
+			console.error("Appwrite authentication service :: get user by ID error", error);
+			return "Anonymous";
+		}
+	}
 }
 
 const authService = new AuthService();

@@ -53,6 +53,7 @@ export default function PostForm({ post }) {
 				const dbPost = await appwriteService.createPost({
 					...data,
 					userId: userData.$id,
+					author: userData.name || "Anonymous",
 				});
 				if (!dbPost || !dbPost.$id) {
 					throw new Error("Post creation failed: Invalid response from Appwrite.");
