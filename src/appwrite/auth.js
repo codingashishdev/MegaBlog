@@ -74,10 +74,12 @@ export class AuthService {
 
 	async logout() {
 		try {
-			return await this.account.deleteSessions();
+			await this.account.deleteSessions();
+			return true;
 		} catch (error) {
 			console.error("Appwrite authentication service :: user logout error", error);
-			throw error;
+			// Return true anyway to allow local logout even if backend fails
+			return true;
 		}
 	}
 }

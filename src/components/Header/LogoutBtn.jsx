@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import authService from "../../appwrite/auth";
 import { logout } from "../../store/authSlice";
 import { Button } from "../index";
@@ -7,20 +8,22 @@ import { Button } from "../index";
 function LogoutBtn() {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setIsLoading(true);
-        authService
-            .logout()
-            .then(() => {
-                dispatch(logout());
-            })
-            .catch((error) => {
-                console.error("Logout failed:", error);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+        try {
+            await authService.logout();
+            dispatch(logout());
+            navigate("/");
+        } catch (error) {
+            console.error("Logout failed:", error);
+            // Even if logout fails on backend, clear local state
+            dispatch(logout());
+            navigate("/");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

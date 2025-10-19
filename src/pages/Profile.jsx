@@ -98,7 +98,7 @@ function Profile() {
             }
 
             // Update Redux store
-            dispatch(login({ userData: updatedUser }));
+            dispatch(login(updatedUser));
 
             setIsEditing(false);
             setFormData(prev => ({
