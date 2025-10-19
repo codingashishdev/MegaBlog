@@ -1,11 +1,12 @@
 import conf from "../conf/conf";
-import { Client, ID, Databases, Storage, Query } from "appwrite";
+import { Client, ID, Databases, Storage, Query, Users } from "appwrite";
 
 
 export class Service {
 	client = new Client();
 	databases;
 	storage;
+	users;
 
 	constructor() {
 		this.client
@@ -14,6 +15,7 @@ export class Service {
 
 		this.databases = new Databases(this.client);
 		this.storage = new Storage(this.client);
+		this.users = new Users(this.client);
 	}
 
 	async createPost({ title, slug, content, featuredImage, status, userId }) {
@@ -125,6 +127,22 @@ export class Service {
 
 	downloadFile(fileId) {
 		return this.storage.getFileDownload(conf.appwriteBucketId, fileId);
+	}
+
+	async getUserName(userId) {
+		try {
+			const user = await this.users.get(userId);
+			return user.name;
+		} catch (error) {
+			console.error("Appwrite service :: getUserName :: error", error);
+			return "Anonymous";
+		}
+	}
+
+	getInitials(name) {
+		if (!name) return "AN";
+		const parts = name.split(" ");
+		return parts.map(part => part[0].toUpperCase()).join("").slice(0, 2);
 	}
 }
 

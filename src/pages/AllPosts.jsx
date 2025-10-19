@@ -16,7 +16,20 @@ function AllPosts() {
 			try {
 				const response = await appwriteService.getAllPosts([]);
 				if (isMounted && response) {
-					setPosts(response.documents);
+					// Fetch author information for each post
+					const postsWithAuthors = await Promise.all(
+						response.documents.map(async (post) => {
+							const authorName = await appwriteService.getUserName(post.userId);
+							return {
+								...post,
+								author: {
+									name: authorName,
+									initials: appwriteService.getInitials(authorName)
+								}
+							};
+						})
+					);
+					setPosts(postsWithAuthors);
 				}
 			} catch (error) {
 				console.error("Failed to load all posts", error);
